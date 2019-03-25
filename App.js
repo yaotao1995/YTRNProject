@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TextInput, Button, ScrollView , Dimensions, ListView, Alert} from 'react-native';
+import {Platform, StyleSheet, Text, View, TextInput, Button, ScrollView , Dimensions, ListView, Alert , TouchableHighlight , StatusBar} from 'react-native';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -27,7 +27,19 @@ export default class App extends Component<Props> {
   constructor(props){
     super(props);
     this.state = {
+      advertisements:[
+        {
+          title:'广告1',
+          backgroundColor:'gray'
+        },  {
+          title:'广告2',
+          backgroundColor:'orange'
+        },  {
+            title:'广告3',
+            backgroundColor:'yellow'
+        }],
       currentPage: 0,
+
       dataSource: ds.cloneWithRows([
         '商品1',
         '商品2',
@@ -38,7 +50,8 @@ export default class App extends Component<Props> {
         '商品7',
         '商品8',
         '商品9',
-        '商品10'
+        '商品10',
+        '商品11'
         ])
     };
   }
@@ -62,36 +75,31 @@ export default class App extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-
+      <StatusBar backgroundColor={'blue'}
+        barStyle={'default'}
+        networkActivityIndicatorVissible={true}
+      ></StatusBar>
         <View style={styles.searchbar}>
           <TextInput style={styles.mInput} placeholder='搜索框'> </TextInput>
           <Button style={styles.mButton} title='搜索' onPress={() => Alert.alert('你单机了搜索按钮',null,null)}> </Button>
         </View>
 
         <View style={styles.lunbotu}>
+          <View style={styles.advertisementContent}>
           <ScrollView ref="scrollView" horizontal={true} showHorizontalScrollIndicator={false} pagingEnabled={true}>
-            <Text style={{
-                    width:Dimensions.get('window').width,
-                    height:180,
-                    backgroundColor:'gray'
-                    }}>
-              广告1
-            </Text>
-            <Text style={{
-                    width:Dimensions.get('window').width,
-                    height:180,
-                    backgroundColor:'orange'
-                    }}>
-              广告2
-            </Text>
-            <Text style={{
-                    width:Dimensions.get('window').width,
-                    height:180,
-                    backgroundColor:'yellow'
-                    }}>
-              广告3
-            </Text>
+            {this.state.advertisements.map((advertisement ,index) =>{
+              return (
+                <TouchableHighlight key={index} onPress={() => Alert.alert('你单机了轮播图',null,null)}>
+                  <Text style={[styles.advertisementContent,{
+                          backgroundColor:advertisement.backgroundColor}
+                          ]}>
+                    {advertisement.title}
+                  </Text>
+                  </TouchableHighlight>
+                );
+              })}
           </ScrollView>
+          </View>
         </View>
 
         <View style={styles.listStyle}>
@@ -103,16 +111,16 @@ export default class App extends Component<Props> {
   }
   _randerRow = (rowData, sectionID, rowID) => {
     return (
+      <TouchableHighlight onPress={() => Alert.alert('你单机了商品',null,null)}>
         <View style={styles.row}>
           <Text>{rowData}</Text>
         </View>
+        </TouchableHighlight>
       );
   }
 
 
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -149,5 +157,9 @@ const styles = StyleSheet.create({
       height: 60,
       justifyContent: 'center',
       alignItems: 'center'
+    },
+    advertisementContent: {
+      width:Dimensions.get('window').width,
+      height:180,
     },
 });
