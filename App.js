@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TextInput, Button, ScrollView , Dimensions, ListView, Alert , TouchableHighlight , StatusBar} from 'react-native';
+import {Platform, StyleSheet, Text, View, TextInput, Button, ScrollView , Dimensions, ListView, Alert , TouchableHighlight , StatusBar , Image} from 'react-native';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -22,6 +22,9 @@ const ds = new ListView.DataSource({
     rowHasChanged: (r1, r2) => r1 !== r2
   });
 
+const circleSize = 8;
+const circleMargin = 5;
+
 export default class App extends Component<Props> {
 
   constructor(props){
@@ -29,17 +32,14 @@ export default class App extends Component<Props> {
     this.state = {
       advertisements:[
         {
-          title:'广告1',
-          backgroundColor:'gray'
+          imageUrl:'https://yaotao1995.github.io/assets/blogImg/images.jpeg',
         },  {
-          title:'广告2',
-          backgroundColor:'orange'
+          imageUrl:'https://yaotao1995.github.io/assets/blogImg/images.jpeg',
         },  {
-            title:'广告3',
-            backgroundColor:'yellow'
+          imageUrl:'https://yaotao1995.github.io/assets/blogImg/images.jpeg',
         }],
       currentPage: 0,
-
+      searchText: '',
       dataSource: ds.cloneWithRows([
         '商品1',
         '商品2',
@@ -73,6 +73,10 @@ export default class App extends Component<Props> {
       }, 2000);
     }
   render() {
+    const advertisementCount = this.state.advertisements.length;
+    const indicatorWidth = circleSize * advertisementCount + circleMargin * advertisementCount * 2;
+    const left = (Dimensions.get('window').width = indicatorWidth) / 2;
+
     return (
       <View style={styles.container}>
       <StatusBar backgroundColor={'blue'}
@@ -80,8 +84,10 @@ export default class App extends Component<Props> {
         networkActivityIndicatorVissible={true}
       ></StatusBar>
         <View style={styles.searchbar}>
-          <TextInput style={styles.mInput} placeholder='搜索框'> </TextInput>
-          <Button style={styles.mButton} title='搜索' onPress={() => Alert.alert('你单机了搜索按钮',null,null)}> </Button>
+          <TextInput style={styles.mInput} placeholder='搜索框' onChangeText={(text) => {
+              this.setState({searchText: text});
+              }}></TextInput>
+          <Button style={styles.mButton} title='搜索' onPress={() => Alert.alert('你单机了搜索按钮' + this.state.searchText,null,null)}> </Button>
         </View>
 
         <View style={styles.lunbotu}>
@@ -90,15 +96,29 @@ export default class App extends Component<Props> {
             {this.state.advertisements.map((advertisement ,index) =>{
               return (
                 <TouchableHighlight key={index} onPress={() => Alert.alert('你单机了轮播图',null,null)}>
-                  <Text style={[styles.advertisementContent,{
-                          backgroundColor:advertisement.backgroundColor}
-                          ]}>
-                    {advertisement.title}
-                  </Text>
+                  <Image
+                    style={styles.advertisementContent}
+                    source={{uri: advertisement.imageUrl}}
+                  ></Image>
                   </TouchableHighlight>
                 );
               })}
           </ScrollView>
+            <View style={[
+                styles.indicator,{
+                  left: left
+                }
+              ]}>
+
+              {this.state.advertisements.map((advertisement , index) => {
+                  return (<View key={index} style={ (index === this.state.currentPage) ? styles.circleSelected : styles.circle}/>
+                        );
+              })}
+
+
+            </View>
+
+
           </View>
         </View>
 
@@ -146,6 +166,7 @@ const styles = StyleSheet.create({
       flex:1,
       backgroundColor:'gray',
       borderWidth:2,
+      borderRadius:10
     },
     mButton: {
       flex:1,
@@ -162,4 +183,27 @@ const styles = StyleSheet.create({
       width:Dimensions.get('window').width,
       height:180,
     },
+    indicator: {
+      position: 'absolute',
+      top:160,
+      flexDirection:'row'
+    },
+    indicator: {
+      position: 'absolute',
+      top:160,
+      flexDirection:'row'
+    },
+    circle: {
+        width: circleSize,
+        height:circleSize,
+        borderRadius: circleSize / 2,
+        marginHorizontal: circleMargin,
+    },
+    circleSelected: {
+        width: circleSize,
+        height:circleSize,
+        borderRadius: circleSize / 2,
+        backgroundColor: 'white',
+        marginHorizontal: circleMargin,
+    }
 });
