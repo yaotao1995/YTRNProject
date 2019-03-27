@@ -41,18 +41,20 @@ export default class App extends Component<Props> {
       currentPage: 0,
       searchText: '',
       dataSource: ds.cloneWithRows([
-        '商品1',
-        '商品2',
-        '商品3',
-        '商品4',
-        '商品5',
-        '商品6',
-        '商品7',
-        '商品8',
-        '商品9',
-        '商品10',
-        '商品11'
-        ])
+        {
+            image: require('./images/head.png'),
+            title:'商品1',
+            subTitle:'描述1'
+        },{
+            image: require('./images/head.png'),
+            title:'商品1',
+            subTitle:'描述1'
+        },{
+            image: require('./images/head.png'),
+            title:'商品1',
+            subTitle:'描述1'
+        }
+      ])
     };
   }
   componentDidMount(){
@@ -133,7 +135,13 @@ export default class App extends Component<Props> {
     return (
       <TouchableHighlight onPress={() => Alert.alert('你单机了商品',null,null)}>
         <View style={styles.row}>
-          <Text>{rowData}</Text>
+          <Image source={rowData.image} style={styles.productImage} ></Image>
+
+          <View style={styles.productText}>
+          <Text style={styles.productTitle}>{rowData.title}</Text>
+          <Text style={styles.productSubTitle}>{rowData.subTitle}</Text>
+          </View>
+
         </View>
         </TouchableHighlight>
       );
@@ -176,8 +184,28 @@ const styles = StyleSheet.create({
     },
     row: {
       height: 60,
-      justifyContent: 'center',
+      flexDirection: 'row',
       alignItems: 'center'
+    },
+    productImage:{
+      marginLeft:10,
+      width: 40,
+      height: 40,
+    },
+    productText:{
+      flex: 1,
+      marginLeft: 10,
+      marginTop: 10,
+      marginBottom:10
+    },
+    productTitle:{
+      flex: 3,
+      fontSize: 16,
+    },
+    productSubTitle:{
+        flex: 2,
+        fontSize: 14,
+        color: 'gray'
     },
     advertisementContent: {
       width:Dimensions.get('window').width,
