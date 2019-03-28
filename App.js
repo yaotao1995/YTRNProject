@@ -7,7 +7,21 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TextInput, Button, ScrollView , Dimensions, ListView, Alert , TouchableHighlight , StatusBar , Image} from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  ScrollView ,
+  Dimensions,
+  ListView,
+  Alert,
+  TouchableHighlight,
+  StatusBar,
+  Image,
+  RefreshControl} from 'react-native';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -38,6 +52,7 @@ export default class App extends Component<Props> {
         },  {
           imageUrl:'https://yaotao1995.github.io/assets/blogImg/images.jpeg',
         }],
+      isRefreshing: false,
       currentPage: 0,
       searchText: '',
       dataSource: ds.cloneWithRows([
@@ -89,7 +104,7 @@ export default class App extends Component<Props> {
           <TextInput style={styles.mInput} placeholder='搜索框' onChangeText={(text) => {
               this.setState({searchText: text});
               }}></TextInput>
-          <Button style={styles.mButton} title='搜索' onPress={() => Alert.alert('你单机了搜索按钮' + this.state.searchText,null,null)}> </Button>
+          <Button style={styles.mButton} title='搜索' onPress={() => Alert.alert('你单击了搜索按钮' + this.state.searchText,null,null)}> </Button>
         </View>
 
         <View style={styles.lunbotu}>
@@ -97,7 +112,7 @@ export default class App extends Component<Props> {
           <ScrollView ref="scrollView" horizontal={true} showHorizontalScrollIndicator={false} pagingEnabled={true}>
             {this.state.advertisements.map((advertisement ,index) =>{
               return (
-                <TouchableHighlight key={index} onPress={() => Alert.alert('你单机了轮播图',null,null)}>
+                <TouchableHighlight key={index} onPress={() => Alert.alert('你单击了轮播图',null,null)}>
                   <Image
                     style={styles.advertisementContent}
                     source={{uri: advertisement.imageUrl}}
@@ -125,12 +140,47 @@ export default class App extends Component<Props> {
         </View>
 
         <View style={styles.listStyle}>
-          <ListView dataSource={this.state.dataSource} renderRow={this._randerRow} />
+          <ListView dataSource={this.state.dataSource}
+                    renderRow={this._randerRow}
+                    renderSeparator={this._renderSeperator}
+                    refreshControl={this._renderRefreshControl()}
+          />
         </View>
 
       </View>
     );
   }
+
+  _renderSeperator(sectionID,rowID,adjacentRowHighlighted){
+    return (
+        <View key={'${sectionID}-${rowID}'} style={styles.divider}></View>
+      );
+  }
+
+  _renderRefreshControl(){
+    return (
+        <RefreshControl
+          refreshing={this.state.isRefreshing}
+          onRefresh={this._onRefresh}
+          tintColor={'#FF0000'}
+          title={'正在刷新，请稍后...'}
+          titleColor={'#0000FF'}>
+        </RefreshControl>
+      );
+  }
+
+  _onRefresh = () =>{
+    this.setState({isRefreshing: true});
+
+    setTimeout(() => {
+      const products = Array.from(new Array(10)).map((value, index) => ({
+        image: require
+
+        }));
+      this.setState({isRefreshing: false});
+    }, 2000);
+  }
+
   _randerRow = (rowData, sectionID, rowID) => {
     return (
       <TouchableHighlight onPress={() => Alert.alert('你单机了商品',null,null)}>
@@ -146,8 +196,6 @@ export default class App extends Component<Props> {
         </TouchableHighlight>
       );
   }
-
-
 }
 
 const styles = StyleSheet.create({
@@ -233,5 +281,11 @@ const styles = StyleSheet.create({
         borderRadius: circleSize / 2,
         backgroundColor: 'white',
         marginHorizontal: circleMargin,
+    },
+    divider: {
+        width: Dimensions.get('window').width - 5,
+        height: 1,
+        marginLeft: 5,
+        backgroundColor: 'lightgray'
     }
 });
